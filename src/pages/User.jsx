@@ -1,12 +1,12 @@
 import React from 'react'
+// import RepoList from '../components/repos/RepoList'
 import { FaCodepen, FaStore, FaUserFriends, FaUsers } from 'react-icons/fa'
 import { useParams, Link } from 'react-router-dom'
-// import RepoList from '../components/repo/RepoList'
 import { useEffect, useContext } from 'react'
 import GithubContext from '../context/github/GithubContext'
 
 function User() {
-    const {getUser, user, repos, } = useContext(GithubContext)
+    const {getUser, user, repos, getRepo } = useContext(GithubContext)
 
     const {
         name,
@@ -25,15 +25,20 @@ function User() {
         hireable,
       } = user
 
+
+
+
     const params = useParams()
 
     useEffect (() => {
         getUser(params.login)
-        
+        getRepo(params.login)
+        // console.log(repos)
     },[])
 
   return (
     <>
+
     <div className='w-full mx-auto lg:w-10/12'>
       <div className='mb-4'>
         <Link to='/' className='btn btn-ghost'>
@@ -145,6 +150,8 @@ function User() {
           </div>
         </div>
       </div>
+      {/* <RepoList repos={repos} /> */}
+      {/* {console.log(getRepo(params.login))} */}
     </div>
     </>
   )

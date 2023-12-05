@@ -1,6 +1,5 @@
 import { createContext,useReducer } from "react"
 import githubReducer from "./GithubReducer"
-import { type } from "@testing-library/user-event/dist/type"
 
 
 const GithubContext = createContext()
@@ -13,6 +12,7 @@ export const GithubProvider = ({children}) => {
     const initialState = {
         users : [],
         user:{},
+        repos:[],
         loading : false
     }
     const [state, dispatch] = useReducer(githubReducer, initialState)
@@ -56,11 +56,10 @@ const SearchUsers = async (text) => {
    })
 }
 
+//    ---------------------------------------------------------------------------------------- 
 
 const getUser  = async (login) => {
     setLoading()
-
-    
 
     const response = await fetch(`${GITHUB_LINK}/users/${login}`,{
         headers:{
@@ -72,14 +71,43 @@ const getUser  = async (login) => {
     }
     else{
         const data = await response.json()
-            dispatch({
+            dispatch({   
             type: 'GET_USER',
             payload:data,
             })
+
     }
 
     
 }
+
+
+// ---------------------------------------------------------------------------------
+
+
+const getRepo  = async (login) => {
+    setLoading()
+
+    
+
+    const response = await fetch(`${GITHUB_LINK}/users/${login}/repos`,{
+        headers:{
+            Authorization:`token${GITHUB_TOKEN}`,
+        },
+    })
+        const data = await response.json()
+        console.log(data)
+            dispatch({   
+                type: 'GET_REPO',
+                payload:data,
+            })
+
+    
+}
+
+
+
+// ---------------------------------------------------------------------------------
 
 const clearUser = () => dispatch ({
     type: 'CLEAR_USERS'
@@ -92,12 +120,11 @@ const clearUser = () => dispatch ({
 
     return <GithubContext.Provider value={
         {
-            users:state.users,
-            loader:state.loader,
-            user:state.user,
+           ...state,
             SearchUsers,
             clearUser,
-            getUser
+            getUser,
+            getRepo
         }
     }>{children}</GithubContext.Provider>
 }
